@@ -8,13 +8,21 @@ module Guard
     require 'guard/minitest/inspector'
     require 'guard/minitest/runner'
     require 'guard/minitest/version'
-    require 'minitest/autorun'
+     ## DJS require 'minitest/autorun'
 
     def initialize(watchers = [], options = {})
       super
       @options = {
         :all_on_start => true
       }.merge(options)
+
+      ## DJS: start
+      if @options[:zeus]
+        require 'minitest/unit'
+        MiniTest::Unit.class_variable_set("@@installed_at_exit", true)
+      end
+      require 'minitest/autorun'
+      ## DJS: end
 
       @runner    = Runner.new(@options)
       @inspector = Inspector.new(@runner.test_folders, @runner.test_file_patterns)
